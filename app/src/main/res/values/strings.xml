@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Simple Convertor</string>
+    <string name="base_converter_title">Base Converter</string>
+    <string name="binary_label">Binary: %1$s</string>
+    <string name="decimal_label">Decimal: %1$s</string>
+    <string name="octal_label">Octal: %1$s</string>
+    <string name="hexadecimal_label">Hexadecimal: %1$s</string>
+    <string name="error_invalid_input">Error: Invalid input</string>
+</resources>
