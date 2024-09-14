@@ -144,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         val fractionPart = absoluteDecimal - integerPart
 
         var binary = ""
+        if (isNegative) {
+            binary += "-"
+        }
 
         // Convert integer part to binary
         var num = integerPart
@@ -164,8 +167,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Add negative sign if the original number was negative
-        return if (isNegative) "-$binary" else if (binary.isEmpty()) "0" else binary
+        return if (binary.isEmpty()) "0" else binary
     }
 
     private fun convertToOctal(decimal: Double): String {
@@ -175,6 +177,9 @@ class MainActivity : AppCompatActivity() {
         val fractionPart = absoluteDecimal - integerPart
 
         var octal = ""
+        if (isNegative) {
+            octal += "-"
+        }
 
         // Convert integer part to octal
         var num = integerPart
@@ -195,8 +200,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Add negative sign if the original number was negative
-        return if (isNegative) "-$octal" else if (octal.isEmpty()) "0" else octal
+        return if (octal.isEmpty()) "0" else octal
     }
     private fun convertToHexadecimal(decimal: Double): String {
         val isNegative = decimal < 0
@@ -206,6 +210,9 @@ class MainActivity : AppCompatActivity() {
 
         val hexChars = "0123456789ABCDEF"
         var hexadecimal = ""
+        if (isNegative) {
+            hexadecimal += "-"
+        }
 
         // Convert integer part to hexadecimal
         var num = integerPart
@@ -226,7 +233,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Add negative sign if the original number was negative
-        return if (isNegative) "-$hexadecimal" else if (hexadecimal.isEmpty()) "0" else hexadecimal
+        return if (hexadecimal.isEmpty()) "0" else hexadecimal
     }
 }
+
+
