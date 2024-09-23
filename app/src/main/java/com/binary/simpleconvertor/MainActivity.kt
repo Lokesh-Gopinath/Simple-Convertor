@@ -18,17 +18,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputValue: EditText
     private lateinit var convertButton: Button
     private lateinit var binaryValue: TextView
+    private lateinit var signedbinary : TextView
     private lateinit var decimalValueText: TextView
     private lateinit var octalValue: TextView
     private lateinit var hexValue: TextView
 
-    @SuppressLint("StringFormatMatches")
+    @SuppressLint("StringFormatMatches", "MissingInflatedId", "StringFormatInvalid")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         inputValue = findViewById(R.id.inputValue)
         convertButton = findViewById(R.id.convertButton)
+        signedbinary = findViewById(R.id.signedbinaryValue)
         binaryValue = findViewById(R.id.binaryValue)
         decimalValueText = findViewById(R.id.decimalValueText)
         octalValue = findViewById(R.id.octalValue)
@@ -59,21 +61,24 @@ class MainActivity : AppCompatActivity() {
                         val adjustedDecimalValue = if (isNegative) -decimalValue else decimalValue
 
                         val binary = convertToBinary(adjustedDecimalValue)
+                        val signedbin = convertToSignedBinary(adjustedDecimalValue) // Proper signed binary calculation
                         val octal = convertToOctal(adjustedDecimalValue)
                         val hex = convertToHexadecimal(adjustedDecimalValue)
-                        Pair(adjustedDecimalValue, Pair(binary, Pair(octal, hex)))
+                        Triple(adjustedDecimalValue, binary, Pair(signedbin, Pair(octal, hex)))
                     } catch (e: Exception) {
-                        Pair(-1.0, null)
+                        Triple(-1.0, "", null)
                     }
                 }
-                val (decimalValue, conversions) = result
+
+                val (decimalValue, binary, conversions) = result
                 if (decimalValue == -1.0) {
                     binaryValue.text = getString(R.string.error_invalid_input)
+                    signedbinary.text = getString(R.string.error_invalid_input)
                     decimalValueText.text = ""
                     octalValue.text = ""
                     hexValue.text = ""
                 } else {
-                    val binary = conversions?.first ?: ""
+                    val signedbin = conversions?.first ?: ""
                     val octal = conversions?.second?.first ?: ""
                     val hex = conversions?.second?.second ?: ""
 
@@ -81,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                     val decimalFormat = DecimalFormat("#.##") // Format to 2 decimal places without trailing zeros
                     val formattedDecimalValue = decimalFormat.format(decimalValue).trimEnd('0').trimEnd('.')
                     binaryValue.text = getString(R.string.binary_label, binary)
+                    signedbinary.text = getString(R.string.signedbinary_label, signedbin) // Set signed binary correctly
                     decimalValueText.text = getString(R.string.decimal_label, formattedDecimalValue)
                     octalValue.text = getString(R.string.octal_label, octal)
                     hexValue.text = getString(R.string.hexadecimal_label, hex)
@@ -94,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                 input.matches(Regex("^-?[0-9]+(\\.[0-9]+)?$")) // Decimal
     }
 
-    fun convertToDecimal(input: String, base: Int): Double {
+    private fun convertToDecimal(input: String, base: Int): Double {
         if (base !in 2..36) {
             throw NumberFormatException("Invalid base. Base must be between 2 and 36.")
         }
@@ -167,6 +173,75 @@ class MainActivity : AppCompatActivity() {
         // Add negative sign if the original number was negative
         return if (isNegative) "-$binary" else if (binary.isEmpty()) "0" else binary
     }
+
+    private fun convertToSignedBinary(decimal: Double): String {
+        val isNegative = decimal < 0
+        val absoluteDecimal = abs(decimal)
+        val integerPart = absoluteDecimal.toInt()
+        val fractionPart = absoluteDecimal - integerPart
+
+        // Convert integer part to binary
+        val binaryInteger = Integer.toBinaryString(integerPart)
+
+        // Convert fractional part to binary with limited precision (3 fractional digits)
+        var binaryFraction = ""
+        var fraction = fractionPart
+        for (i in 0 until 3) {
+            fraction *= 2
+            val bit = fraction.toInt()
+            binaryFraction += bit.toString()
+            fraction -= bit
+        }
+
+        val binary = if (binaryFraction.isNotEmpty()) "$binaryInteger.$binaryFraction" else binaryInteger
+
+        // If the number is negative, apply two's complement to the integer part
+        return if (isNegative) {
+            val twoComplement = twoComplement(binaryInteger)
+
+            // Combine with fractional part, two's complement is only for the integer part
+            if (binaryFraction.isNotEmpty()) "$twoComplement.$binaryFraction" else twoComplement
+        } else {
+            binary
+        }
+    }
+
+    // Function to compute two's complement for a binary string
+    private fun twoComplement(binary: String): String {
+        // Invert the binary digits (one's complement)
+        val invertedBinary = binary.map { if (it == '1') '0' else '1' }.joinToString("")
+
+        // Add 1 to the inverted binary string to get two's complement
+        return addOneToBinary(invertedBinary)
+    }
+
+    // Function to add one to a binary string (used for two's complement)
+    private fun addOneToBinary(binary: String): String {
+        val result = StringBuilder(binary.reversed())
+        var carry = 1
+
+        for (i in result.indices) {
+            if (carry == 0) break
+
+            when (result[i]) {
+                '0' -> {
+                    result.setCharAt(i, '1')
+                    carry = 0
+                }
+                '1' -> {
+                    result.setCharAt(i, '0')
+                    carry = 1
+                }
+            }
+        }
+
+        // If carry is still 1, we need to add an extra bit at the end
+        if (carry == 1) result.append('1')
+
+        return result.reverse().toString()
+    }
+
+
 
     private fun convertToOctal(decimal: Double): String {
         val isNegative = decimal < 0

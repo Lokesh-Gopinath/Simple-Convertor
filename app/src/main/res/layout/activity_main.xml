@@ -68,6 +68,13 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/signedbinaryValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="18sp" />
+
+                <TextView
                     android:id="@+id/decimalValueText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
