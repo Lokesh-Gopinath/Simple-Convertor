@@ -1,4 +1,5 @@
 <resources>
+    <!--this is the part where the used string in-app are given-->
     <string name="app_name">Simple Convertor</string>
     <string name="base_converter_title">Base Converter</string>
     <string name="binary_label">Binary: %1$s</string>
