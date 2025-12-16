@@ -1,5 +1,7 @@
 package com.binary.simpleconvertor
 
+// importing only the required libs
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +17,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
+    //initiating the variables
     private lateinit var inputValue: EditText
     private lateinit var convertButton: Button
     private lateinit var binaryValue: TextView
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         return input.matches(Regex("^[0-9A-Fa-f]+$")) || // Hexadecimal
                 input.matches(Regex("^-?[0-9]+(\\.[0-9]+)?$")) // Decimal
     }
-
+// the conversion code parts below for each conversions
     fun convertToDecimal(input: String, base: Int): Double {
         if (base !in 2..36) {
             throw NumberFormatException("Invalid base. Base must be between 2 and 36.")
