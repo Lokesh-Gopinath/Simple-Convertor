@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--this the resource file that used to given the array values for the app-->
     <string-array name="base_array">
         <item>2</item>
         <item>8</item>
